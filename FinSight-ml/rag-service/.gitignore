@@ -1,0 +1,14 @@
+venv/
+**pycache**/
+*.pyc
+
+.env
+
+faiss_index/
+*.pkl
+*.bin
+
+.idea/
+.vscode/
+
+.DS_Store

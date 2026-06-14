@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FinSight.main.iml" filepath="$PROJECT_DIR$/.idea/modules/FinSight.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FinSight.test.iml" filepath="$PROJECT_DIR$/.idea/modules/FinSight.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Fin_Sight.iml" filepath="$PROJECT_DIR$/.idea/Fin_Sight.iml" />
+    </modules>
+  </component>
+</project>
