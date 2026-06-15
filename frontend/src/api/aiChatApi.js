@@ -1,5 +1,6 @@
 import API from "./axios";
 
+// Ai chat
 export const askAI = async (
   message
 ) => {

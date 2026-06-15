@@ -36,16 +36,20 @@ export const getCategorySummary = (category) =>
 export const getTotalExpenses = () =>
   API.get("/expenses/total");
 
-// expense forecast
-export const getForecast = () =>
-  API.get("/forecast");
-
+  // CATEGORY TRENDS
 export const getCategoryTrends = async() =>{
     return await API.get("/category-trends");
 }
 
+// MONTHLY TREND
 export const getMonthlyTrend = () =>
   API.get("/trends/monthly");
 
+
+// expense forecast
+export const getForecast = () =>
+  API.get("/forecast");
+
+// financial stability
 export const getFinancialStability =
-  () => API.get("/stability");
+  () => API.get("/financial-health");

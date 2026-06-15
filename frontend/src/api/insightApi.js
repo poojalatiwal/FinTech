@@ -1,5 +1,6 @@
 import API from "./axios";
 
+// Insights
 export const getCategoryInsight = (
   category,
   month

@@ -214,7 +214,8 @@ const [
   profileRes,
   expenseRes,
   healthRes,
-      forecastRes
+  forecastRes,
+  stabilityRes
 ] = await Promise.all([
   getExpenseSummary(),
   getRecentExpenses(),
@@ -223,7 +224,8 @@ const [
   getFinancialProfile(),
   getExpenses(),
   getFinancialHealth(),
-    getForecast()
+  getForecast(),
+  getFinancialStability()
 ]);
 
     console.log("Summary:", summaryRes.data);
@@ -231,8 +233,11 @@ const [
     console.log("Budget:", budgetRes.data);
     console.log("Insight:", insightRes.data);
     console.log("Profile:", profileRes.data);
+    console.log( "Financial Stability:",stabilityRes.data);
 
     setUserProfile(profileRes.data);
+    setForecast(forecastRes.data);
+    setStability(stabilityRes.data);
 
     setProfileForm({
       monthlyIncome:
@@ -1191,7 +1196,7 @@ const stats = [
     rounded-3xl
     p-5
 
-    hover:border-purple-400
+    hover:border-blue-500/40
     hover:-translate-y-1
     hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)]
 
@@ -1231,7 +1236,7 @@ const stats = [
         text-purple-400
         "
       >
-        ₹{(forecast?.predictedExpense ?? 0).toLocaleString()}
+       ₹{Math.round(forecast?.predictedExpense ?? 0).toLocaleString()}
       </h2>
 
       <p className="text-slate-400 mt-2">
@@ -1290,39 +1295,46 @@ const stats = [
         Financial Stability
       </h3>
 
-      <span
-        className="
-        bg-cyan-500/20
-        text-cyan-400
-        px-3
-        py-1
-        rounded-full
-        text-xs
-        font-medium
-        "
-      >
-        Score
-      </span>
+    <span
+  className={`
+  px-3
+  py-1
+  rounded-full
+  text-xs
+  font-medium
+
+  ${
+    stability?.financialStatus === "Stable"
+      ? "bg-green-500/20 text-green-400"
+      : stability?.financialStatus === "Moderate"
+      ? "bg-yellow-500/20 text-yellow-400"
+      : "bg-red-500/20 text-red-400"
+  }
+  `}
+>
+  {stability?.financialStatus || "Unknown"}
+</span>
 
     </div>
 
-    <div className="mt-6 text-center">
+   <div className="mt-4 text-center">
 
-      <h2
-        className="
-        text-5xl
-        font-black
-        text-cyan-400
-        "
-      >
-        {stability?.score ?? 0}
-      </h2>
+  <h2
+    className="
+    text-4xl
+    font-black
+    text-cyan-400
+    leading-none
+    "
+  >
+    {stability?.stabilityScore ?? 0}
+  </h2>
 
-      <p className="text-slate-400 mt-2">
-        Stability Index
-      </p>
+  <p className="text-slate-500 text-sm mt-1">
+    Stability Index
+  </p>
 
-    </div>
+</div>
 
     <div className="mt-6">
 
@@ -1340,39 +1352,45 @@ const stats = [
           h-full
           bg-cyan-400
           "
-          style={{
-            width: `${stability?.score ?? 0}%`
-          }}
+         style={{
+  width: `${stability?.stabilityScore ?? 0}%`
+}}
         />
 
       </div>
 
       <p
-        className="
-        mt-4
-        text-sm
-        text-slate-300
-        "
-      >
-        {stability?.message ||
-          "Financial stability analysis unavailable."}
-      </p>
+  className="
+  mt-3
+  text-xs
+  leading-5
+  text-slate-300
+  line-clamp-2
+  "
+>
+  {stability?.message ||
+    "Financial stability analysis unavailable."}
+</p>
 
     </div>
 
   </div>
 
 </div>
+
+{/*Alert*/}
 <div
-className="
-mt-6
+  className="
+  mt-6
 
-bg-slate-900/60
-border border-red-500/20
+  bg-slate-900/60
+  border border-red-500/20
 
-rounded-3xl
-p-6
-"
+  rounded-3xl
+  p-6
+
+  col-span-full
+  "
 >
 
 <h3
