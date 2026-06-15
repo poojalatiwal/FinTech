@@ -13,10 +13,8 @@ import {
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-import ExpenseChart from "../components/ExpenseChart";
-import RecentExpenses from "../components/RecentExpenses";
 import {getFinancialHealth} from "../api/healthApi";
-import {getExpenseSummary,getRecentExpenses,getExpenses,getMonthlyTrend }from "../api/expenseApi";
+import {getExpenseSummary,getRecentExpenses,getExpenses ,getForecast,getFinancialStability}from "../api/expenseApi";
 
 
 import { getInsight}from "../api/insightApi";
@@ -44,6 +42,12 @@ export default function Dashboard() {
   });
 
 };
+
+const [forecast, setForecast] =
+  useState(null);
+
+  const [stability, setStability] = useState(null);
+
 const saveProfile =
 async () => {
 
@@ -120,6 +124,33 @@ const [profileForm,
     budgetGoal: 0
 
   });
+
+  const alerts = [];
+
+if (dashboard?.budgetUsage > 80) {
+  alerts.push({
+    title: "Budget Warning",
+    message: "You are nearing your monthly budget.",
+    level: "HIGH"
+  });
+}
+
+if (dashboard?.savings < dashboard?.monthlyIncome * 0.2) {
+  alerts.push({
+    title: "Low Savings",
+    message: "Savings are below 20% of income.",
+    level: "MEDIUM"
+  });
+}
+
+if ((userProfile?.emergencyFund ?? 0) < dashboard?.monthlyIncome * 3) {
+  alerts.push({
+    title: "Emergency Fund",
+    message: "Build at least 3 months of income as emergency fund.",
+    level: "LOW"
+  });
+}
+
 const calculateProfileCompletion =
 () => {
 
@@ -178,26 +209,25 @@ useEffect(() => {
 const [
   summaryRes,
   recentRes,
-  trendRes,
   budgetRes,
   insightRes,
   profileRes,
   expenseRes,
-  healthRes
+  healthRes,
+      forecastRes
 ] = await Promise.all([
   getExpenseSummary(),
   getRecentExpenses(),
-  getMonthlyTrend(),
   getBudgets(),
   getInsight(),
   getFinancialProfile(),
   getExpenses(),
-  getFinancialHealth()
+  getFinancialHealth(),
+    getForecast()
 ]);
 
     console.log("Summary:", summaryRes.data);
     console.log("Recent:", recentRes.data);
-    console.log("Trend:", trendRes.data);
     console.log("Budget:", budgetRes.data);
     console.log("Insight:", insightRes.data);
     console.log("Profile:", profileRes.data);
@@ -295,9 +325,6 @@ setDashboard({
 
   budgetGoal:
     profileRes.data?.budgetGoal ?? 0,
-
-  monthlyExpenses:
-    trendRes.data ?? [],
 
   recentExpenses:
     recentRes.data ?? [],
@@ -626,26 +653,20 @@ const stats = [
 
 {/* CHART + RIGHT SIDEBAR */}
 
+{/* ROW 2 */}
+
 <div
-  className="
-  grid
-  grid-cols-1
-  xl:grid-cols-3
-  gap-6
-  mt-6
-  items-start
-  "
+ className="
+ grid
+ grid-cols-1
+ lg:grid-cols-2
+ xl:grid-cols-3
+ gap-6
+ mt-6
+ "
 >
 
   {/* EXPENSE TREND */}
-
-  <div className="xl:col-span-2  h-[520px]">
-
-    <ExpenseChart
-      data={dashboard?.monthlyExpenses || []}
-    />
-
-  </div>
 
   {/* RIGHT COLUMN */}
 
@@ -945,20 +966,492 @@ const stats = [
     </div>
 
   </div>
+{/* FINANCIAL PROFILE */}
+
+<div
+  className="
+  bg-slate-900/60
+  backdrop-blur-xl
+  border border-slate-800
+  rounded-3xl
+  p-5
+
+  hover:border-blue-500/40
+  transition-all
+  "
+>
+
+  {/* HEADER */}
+
+  <div className="flex justify-between items-start mb-6">
+
+    <div>
+
+      <h3 className="text-xl font-bold text-white">
+        Financial Profile
+      </h3>
+
+      <p className="text-slate-400 text-sm mt-1">
+        Complete your profile for smarter AI insights
+      </p>
+
+    </div>
+
+    <button
+      onClick={() => setShowProfileModal(true)}
+      className="
+      px-4 py-2
+      rounded-xl
+
+      bg-gradient-to-r
+      from-blue-600
+      to-purple-600
+
+      text-white
+      font-medium
+
+      hover:scale-105
+      transition-all
+      "
+    >
+      Edit
+    </button>
+
+  </div>
+
+  {/* VALUES */}
+
+  <div className="space-y-3">
+
+    <div
+      onClick={() => setShowProfileModal(true)}
+      className="
+      flex
+      items-center
+      justify-between
+
+      p-4
+
+      rounded-2xl
+
+      bg-cyan-500/10
+      border border-cyan-500/20
+
+      hover:border-cyan-400
+      transition-all
+
+      cursor-pointer
+      "
+    >
+      <span className="text-cyan-300">
+        Emergency Fund
+      </span>
+
+      <span className="text-xl font-bold text-cyan-400">
+        ₹{(userProfile?.emergencyFund ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div
+      onClick={() => setShowProfileModal(true)}
+      className="
+      flex
+      items-center
+      justify-between
+
+      p-4
+
+      rounded-2xl
+
+      bg-green-500/10
+      border border-green-500/20
+
+      hover:border-green-400
+      transition-all
+
+      cursor-pointer
+      "
+    >
+      <span className="text-green-300">
+        Investments
+      </span>
+
+      <span className="text-xl font-bold text-green-400">
+        ₹{(userProfile?.investmentAmount ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div
+      onClick={() => setShowProfileModal(true)}
+      className="
+      flex
+      items-center
+      justify-between
+
+      p-4
+
+      rounded-2xl
+
+      bg-red-500/10
+      border border-red-500/20
+
+      hover:border-red-400
+      transition-all
+
+      cursor-pointer
+      "
+    >
+      <span className="text-red-300">
+        Loan Payment
+      </span>
+
+      <span className="text-xl font-bold text-red-400">
+        ₹{(userProfile?.loanPayment ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+  <div
+      onClick={() => setShowProfileModal(true)}
+      className="
+      flex
+      items-center
+      justify-between
+
+      p-4
+
+      rounded-2xl
+
+      bg-yellow-500/10
+      border border-yellow-500/20
+
+      hover:border-yellow-400
+      transition-all
+
+      cursor-pointer
+      "
+    >
+      <span className="text-red-300">
+        Rent
+      </span>
+
+      <span className="text-xl font-bold text-yellow-400">
+        ₹{(userProfile?.rentOrMortgage ?? 0).toLocaleString()}
+      </span>
+    </div>
+    <div
+      onClick={() => setShowProfileModal(true)}
+      className="
+      flex
+      items-center
+      justify-between
+
+      p-4
+
+      rounded-2xl
+
+      bg-purple-500/10
+      border border-purple-500/20
+
+      hover:border-purple-400
+      transition-all
+
+      cursor-pointer
+      "
+    >
+      <span className="text-purple-300">
+        Subscriptions
+      </span>
+
+      <span className="text-xl font-bold text-purple-400">
+        {userProfile?.subscriptionServices ?? 0}
+      </span>
+    </div>
+
+  </div>
+
+</div>
+{/* ROW */}
+{/* FORECAST + STABILITY */}
+
+<div
+  className="
+  flex
+  flex-col
+  gap-6
+  "
+>
+
+  {/* FORECAST */}
+
+  <div
+    className="
+    bg-slate-900/60
+    backdrop-blur-xl
+    border border-purple-500/20
+    rounded-3xl
+    p-5
+
+    hover:border-purple-400
+    hover:-translate-y-1
+    hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)]
+
+    transition-all
+    duration-300
+    "
+  >
+
+    <div className="flex items-center justify-between">
+
+      <h3 className="text-lg font-bold text-white">
+        Forecast
+      </h3>
+
+      <span
+        className="
+        bg-purple-500/20
+        text-purple-400
+        px-3
+        py-1
+        rounded-full
+        text-xs
+        font-medium
+        "
+      >
+        Next Month
+      </span>
+
+    </div>
+
+    <div className="mt-6">
+
+      <h2
+        className="
+        text-4xl
+        font-black
+        text-purple-400
+        "
+      >
+        ₹{(forecast?.predictedExpense ?? 0).toLocaleString()}
+      </h2>
+
+      <p className="text-slate-400 mt-2">
+        Predicted Expense
+      </p>
+
+    </div>
+
+    <div
+      className="
+      mt-5
+      rounded-xl
+      bg-purple-500/10
+      border border-purple-500/20
+      p-3
+      "
+    >
+
+      <p
+        className="
+        text-sm
+        text-slate-300
+        leading-relaxed
+        "
+      >
+        {forecast?.message ||
+          "Forecast unavailable. Add more expense history to generate predictions."}
+      </p>
+
+    </div>
+
+  </div>
+
+  {/* FINANCIAL STABILITY */}
+
+  <div
+    className="
+    bg-slate-900/60
+    backdrop-blur-xl
+    border border-cyan-500/20
+    rounded-3xl
+    p-5
+
+    hover:border-cyan-400
+    hover:-translate-y-1
+    hover:shadow-[0_10px_30px_rgba(34,211,238,0.15)]
+
+    transition-all
+    duration-300
+    "
+  >
+
+    <div className="flex items-center justify-between">
+
+      <h3 className="text-lg font-bold text-white">
+        Financial Stability
+      </h3>
+
+      <span
+        className="
+        bg-cyan-500/20
+        text-cyan-400
+        px-3
+        py-1
+        rounded-full
+        text-xs
+        font-medium
+        "
+      >
+        Score
+      </span>
+
+    </div>
+
+    <div className="mt-6 text-center">
+
+      <h2
+        className="
+        text-5xl
+        font-black
+        text-cyan-400
+        "
+      >
+        {stability?.score ?? 0}
+      </h2>
+
+      <p className="text-slate-400 mt-2">
+        Stability Index
+      </p>
+
+    </div>
+
+    <div className="mt-6">
+
+      <div
+        className="
+        h-3
+        bg-slate-800
+        rounded-full
+        overflow-hidden
+        "
+      >
+
+        <div
+          className="
+          h-full
+          bg-cyan-400
+          "
+          style={{
+            width: `${stability?.score ?? 0}%`
+          }}
+        />
+
+      </div>
+
+      <p
+        className="
+        mt-4
+        text-sm
+        text-slate-300
+        "
+      >
+        {stability?.message ||
+          "Financial stability analysis unavailable."}
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+<div
+className="
+mt-6
+
+bg-slate-900/60
+border border-red-500/20
+
+rounded-3xl
+p-6
+"
+>
+
+<h3
+className="
+text-xl
+font-bold
+mb-5
+"
+>
+Smart Alerts
+</h3>
+
+<div className="space-y-4">
+
+{alerts.map((alert,index)=>(
+
+<div
+key={index}
+className="
+flex
+items-center
+justify-between
+
+bg-slate-800/50
+
+rounded-xl
+p-4
+
+hover:bg-slate-800
+transition-all
+"
+>
+
+<div>
+
+<p className="font-medium">
+{alert.title}
+</p>
+
+<p
+className="
+text-sm
+text-slate-400
+"
+>
+{alert.message}
+</p>
 
 </div>
 
-        {/* RECENT EXPENSES */}
+<span
+className={`
+px-3
+py-1
 
-<div className="mt-8">
+rounded-full
+text-xs
 
-  <RecentExpenses
-    expenses={
-      dashboard?.recentExpenses || []
-    }
-  />
+${
+alert.level === "HIGH"
+? "bg-red-500/20 text-red-400"
+: alert.level === "MEDIUM"
+? "bg-yellow-500/20 text-yellow-400"
+: "bg-green-500/20 text-green-400"
+}
+`}
+>
+{alert.level}
+</span>
 
 </div>
+
+))}
+
+</div>
+
+</div>
+</div>
+
 
       </main>
 

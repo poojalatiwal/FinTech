@@ -46,3 +46,6 @@ export const getCategoryTrends = async() =>{
 
 export const getMonthlyTrend = () =>
   API.get("/trends/monthly");
+
+export const getFinancialStability =
+  () => API.get("/stability");
