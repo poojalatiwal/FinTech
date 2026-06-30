@@ -78,11 +78,6 @@ export default function Sidebar() {
     },
 
     {
-      name: "Fraud Detection",
-      path: "/fraud",
-      icon: <FaShieldAlt />
-    },
-    {
       name: "Reports",
       path: "/reports",
       icon: <FaFilePdf />

@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Budget from "./pages/Budget";
 import Forecast from "./pages/Forecast";
 import Reports from "./pages/Report";
+import Goals from "./pages/Goals";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
@@ -81,6 +82,14 @@ export default function App() {
   }
 />
 
+<Route
+  path="/goals"
+  element={
+    <ProtectedRoute>
+      <Goals/>
+    </ProtectedRoute>
+  }
+/>
 
 <Route
   path="/forecast"

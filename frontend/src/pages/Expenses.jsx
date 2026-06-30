@@ -294,21 +294,58 @@ duration-300
         setIsOpen={setSidebarOpen}
       />
 
-      <div className="flex-1 lg:ml-72">
+      <div
+  className="
+    flex-1
+    w-full
+    min-w-0
+
+    lg:ml-72
+
+    overflow-x-hidden
+  "
+>
 
         <Navbar
           setSidebarOpen={setSidebarOpen}
         />
+<main
+  className="
+    w-full
+    min-w-0
 
-        <main className="p-8">
+    px-4
+    py-5
+
+    sm:px-6
+    lg:px-8
+
+    overflow-x-hidden
+  "
+>
 
           {/* HEADER */}
 
-          <div className="flex justify-between items-center mb-8">
+          <div
+            className="
+              flex
+              flex-col
+              sm:flex-row
+
+              items-start
+              sm:items-center
+
+              justify-between
+
+              gap-5
+
+              mb-8
+            "
+          >
 
             <div>
 
-              <h1 className="text-4xl font-bold">
+              <h1 className="text-3xl sm:text-4xl font-bold">
                 Expenses
               </h1>
 
@@ -351,51 +388,62 @@ duration-300
 
           {/* SUMMARY */}
 
-          <div
-    className="
+<div
+  className="
     grid
     grid-cols-1
-    md:grid-cols-3
-    gap-4
-    mb-6
-    "
-    >
+    lg:grid-cols-3
+
+    gap-5
+
+    mb-8
+
+    w-full
+  "
+>
 
   {/* TOTAL */}
 
   <div
     className="
-    bg-slate-900/70
-    backdrop-blur-xl
+      w-full
 
-    border
-    border-slate-800
+      rounded-3xl
 
-    rounded-3xl
-    p-6
+      bg-slate-900/70
+      backdrop-blur-xl
+
+      border
+      border-slate-800
+
+      p-5
+      sm:p-6
+
+      transition-all
 
       hover:border-blue-500
-              hover:scale-[1.02]
-              hover:-translate-y-1
-              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
-
-    transition-all
-    duration-300
+      hover:shadow-[0_20px_40px_rgba(59,130,246,0.15)]
     "
   >
-    <FaWallet
-      className="
-      text-3xl
-      text-red-400
-      mb-4
-      "
-    />
 
-    <p className="text-slate-400">
+    <FaWallet className="text-red-400 text-3xl mb-4"/>
+
+    <p className="text-slate-400 text-sm">
       Total Expenses
     </p>
 
-    <h2 className="text-4xl font-bold mt-2">
+    <h2
+      className="
+        mt-3
+
+        text-3xl
+        sm:text-4xl
+
+        font-bold
+
+        break-all
+      "
+    >
       ₹{summary?.total || 0}
     </h2>
 
@@ -405,235 +453,271 @@ duration-300
 
   <div
     className="
-    bg-slate-900/70
-    backdrop-blur-xl
+      w-full
 
-    border
-    border-slate-800
+      rounded-3xl
 
-    rounded-3xl
-    p-6
+      bg-slate-900/70
+      backdrop-blur-xl
+
+      border
+      border-slate-800
+
+      p-5
+      sm:p-6
+
+      transition-all
 
       hover:border-blue-500
-
-              hover:scale-[1.02]
-
-              hover:-translate-y-1
-
-              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
-
-    transition-all
-    duration-300
+      hover:shadow-[0_20px_40px_rgba(59,130,246,0.15)]
     "
   >
 
-    <FaWallet
-      className="
-      text-3xl
-      text-blue-400
-      mb-4
-      "
-    />
+    <FaWallet className="text-blue-400 text-3xl mb-4"/>
 
-    <p className="text-slate-400">
+    <p className="text-slate-400 text-sm">
       Current Month Expense
     </p>
 
-    <h2 className="text-4xl font-bold mt-2">
+    <h2
+      className="
+        mt-3
+
+        text-3xl
+        sm:text-4xl
+
+        font-bold
+
+        break-all
+      "
+    >
       ₹{currentMonthExpense}
     </h2>
 
   </div>
 
-  {/* TOTAL RECORDS */}
+  {/* FORECAST */}
 
   <div
     className="
-    bg-slate-900/70
-    backdrop-blur-xl
+      w-full
 
-    border
-    border-slate-800
+      rounded-3xl
 
-    rounded-3xl
-    p-6
+      bg-slate-900/70
+      backdrop-blur-xl
+
+      border
+      border-slate-800
+
+      p-5
+      sm:p-6
+
+      transition-all
 
       hover:border-blue-500
-
-              hover:scale-[1.02]
-
-              hover:-translate-y-1
-
-              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
-
-    transition-all
-    duration-300
+      hover:shadow-[0_20px_40px_rgba(59,130,246,0.15)]
     "
   >
 
-    <FaWallet
+    <FaWallet className="text-purple-400 text-3xl mb-4"/>
+
+    <p className="text-slate-400 text-sm">
+      Forecast Next Month
+    </p>
+
+    <h2
       className="
-      text-3xl
-      text-purple-400
-      mb-4
+        mt-3
+
+        text-3xl
+        sm:text-4xl
+
+        font-bold
+
+        break-all
       "
-    />
+    >
+      ₹{Math.round(
+        forecast?.predictedExpense || 0
+      ).toLocaleString("en-IN")}
+    </h2>
 
-<p className="text-slate-400">
-  Forecast Next Month
-</p>
+    <p
+      className={`
+        mt-4
+        text-sm
 
- <h2 className="text-4xl font-bold mt-2">
-    ₹{Math.round(
-      forecast?.predictedExpense || 0
-    ).toLocaleString("en-IN")}
-  </h2>
-
-<p
-  className={`mt-2 text-sm font-medium ${
-    forecast?.predictedExpense > 50000
-      ? "text-red-400"
-      : forecast?.predictedExpense > 25000
-      ? "text-yellow-400"
-      : "text-emerald-400"
-  }`}
->
-  {forecast?.message}
-</p>
+        ${
+          forecast?.predictedExpense > 50000
+            ? "text-red-400"
+            : forecast?.predictedExpense > 25000
+            ? "text-yellow-400"
+            : "text-emerald-400"
+        }
+      `}
+    >
+      {forecast?.message}
+    </p>
 
   </div>
 
 </div>
 
 {/* ANALYTICS */}
+{/* ===================== CHARTS ===================== */}
 
 <div
   className="
-  grid
-  grid-cols-1
-  xl:grid-cols-2
-  gap-6
-  mb-6
+    grid
+    grid-cols-1
+    xl:grid-cols-2
+
+    gap-5
+    lg:gap-6
+
+    mb-6
+
+    w-full
   "
 >
 
-  {/* EXPENSE TREND */}
+  {/* Expense Trend */}
 
-  <div className="h-[500px]">
-
-    <ExpenseChart
-      data={trendData}
-    />
-
-  </div>
-
-  {/* CATEGORY TREND */}
-
-  <div className="h-[500px]">
-
-    <CategoryTrendChart
-      data={categoryTrends}
-    />
-
-  </div>
-
+<div
+  className="
+  h-[300px]
+  sm:h-[380px]
+  md:h-[430px]
+  lg:h-[470px]
+  xl:h-[500px]
+  w-full
+  "
+>
+  <ExpenseChart data={trendData} />
 </div>
-          {/* SEARCH */}
 
-   <div
-  className="
-  flex
-  flex-col
-  md:flex-row
-  gap-4
-  mb-6
-  "
->
-
-  {/* Search */}
-<div
-  className="
-  group
-
-  flex
-  items-center
-  gap-3
-
-  flex-1
-
-  bg-slate-900/70
-  backdrop-blur-xl
-
-  border
-  border-slate-800
-
-  rounded-2xl
-
-  px-5
-  py-4
-
-  hover:border-blue-500
-
-  hover:shadow-[0_0_25px_rgba(59,130,246,0.15)]
-
-  focus-within:border-blue-500
-
-  focus-within:shadow-[0_0_30px_rgba(59,130,246,0.25)]
-
-  transition-all
-  duration-300
-  "
->
-
-  <FaSearch
-    className="
-    text-slate-500
-
-    group-hover:text-blue-400
-
-    group-focus-within:text-blue-400
-
-    transition-all
-    duration-300
-    "
-  />
-
-  {/* Vertical Line */}
+  {/* Category Trend */}
 
   <div
     className="
-    h-5
-    w-px
-
-    bg-slate-700
-
-    group-hover:bg-blue-500
-
-    transition-all
-    duration-300
+    h-[300px]
+    sm:h-[380px]
+    md:h-[430px]
+    lg:h-[470px]
+    xl:h-[500px]
     "
-  />
-
-  <input
-    value={search}
-    onChange={(e) =>
-      setSearch(e.target.value)
-    }
-    placeholder="Search by title or category..."
-    className="
-    flex-1
-
-    bg-transparent
-
-    text-white
-
-    placeholder:text-slate-500
-
-    outline-none
-    "
-  />
+  >
+    <CategoryTrendChart
+      data={categoryTrends}
+    />
+  </div>
 
 </div>
+
+{/*SEARCH */}
+
+<div
+  className="
+    flex
+    flex-col
+    lg:flex-row
+
+    gap-4
+
+    mb-6
+
+    w-full
+  "
+>
+
+  <div
+    className="
+      group
+
+      flex
+      items-center
+
+      w-full
+      flex-1
+
+      gap-3
+
+      bg-slate-900/70
+      backdrop-blur-xl
+
+      border
+      border-slate-800
+
+      rounded-2xl
+
+      px-4
+      sm:px-5
+
+      py-3
+      sm:py-4
+
+      hover:border-blue-500
+      hover:shadow-[0_0_25px_rgba(59,130,246,0.15)]
+
+      focus-within:border-blue-500
+      focus-within:shadow-[0_0_30px_rgba(59,130,246,0.25)]
+
+      transition-all
+      duration-300
+    "
+  >
+
+    <FaSearch
+      className="
+        text-lg
+        text-slate-500
+
+        shrink-0
+
+        group-hover:text-blue-400
+        group-focus-within:text-blue-400
+
+        transition-all
+      "
+    />
+
+    <div
+      className="
+        h-5
+        w-px
+
+        bg-slate-700
+
+        group-hover:bg-blue-500
+
+        transition-all
+      "
+    />
+
+    <input
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="Search by title or category..."
+      className="
+        flex-1
+        min-w-0
+
+        bg-transparent
+
+        text-sm
+        sm:text-base
+
+        text-white
+
+        placeholder:text-slate-500
+
+        outline-none
+      "
+    />
+
+  </div>
+
 
     {/* Category Filter */}
 
@@ -725,7 +809,7 @@ duration-300
 
 </div>
 </div>
-          {/* TABLE */}
+{/* ===================== EXPENSE TABLE ===================== */}
 
 <div
   className="
@@ -752,10 +836,19 @@ duration-300
   <div
     className="
     flex
-    items-center
+    flex-col
+    sm:flex-row
+
+    items-start
+    sm:items-center
+
     justify-between
 
-    px-6
+    gap-4
+
+    px-4
+    sm:px-6
+
     py-5
 
     border-b
@@ -765,39 +858,30 @@ duration-300
 
     <div>
 
-      <h2
-        className="
-        text-xl
-        font-bold
-        text-white
-        "
-      >
+      <h2 className="text-lg sm:text-xl font-bold text-white">
         Expense Records
       </h2>
 
-      <p
-        className="
-        text-sm
-        text-slate-400
-        mt-1
-        "
-      >
+      <p className="text-xs sm:text-sm text-slate-400 mt-1">
         Manage and track all expenses
       </p>
 
     </div>
 
     <button
-      onClick={() =>
-        setShowHistory(true)
-      }
+      onClick={() => setShowHistory(true)}
       className="
+      w-full
+      sm:w-auto
+
       flex
+      justify-center
       items-center
+
       gap-2
 
-      px-4
-      py-2.5
+      px-5
+      py-3
 
       rounded-xl
 
@@ -811,7 +895,6 @@ duration-300
       hover:shadow-[0_0_20px_rgba(59,130,246,0.35)]
 
       transition-all
-      duration-300
       "
     >
       View History
@@ -819,125 +902,144 @@ duration-300
 
   </div>
 
- <table className="w-full">
+  {/* Scrollable Table */}
 
-              <thead>
+  <div className="overflow-x-auto">
 
-                <tr className="bg-slate-800">
+    <table className="min-w-[750px] w-full">
 
-                  <th className="p-4 text-left">
-                    Title
-                  </th>
+      <thead
+        className="
+        sticky
+        top-0
 
-                  <th className="p-4 text-left">
-                    Category
-                  </th>
+        bg-slate-800
+        z-10
+        "
+      >
 
-                  <th className="p-4 text-left">
-                    Amount
-                  </th>
+        <tr>
 
-                  <th className="p-4 text-left">
-                    Date
-                  </th>
+          <th className="px-5 py-4 text-left text-sm font-semibold">
+            Title
+          </th>
 
-                  <th className="p-4 text-center">
-                    Actions
-                  </th>
+          <th className="px-5 py-4 text-left text-sm font-semibold">
+            Category
+          </th>
 
-                </tr>
+          <th className="px-5 py-4 text-left text-sm font-semibold">
+            Amount
+          </th>
 
-              </thead>
+          <th className="px-5 py-4 text-left text-sm font-semibold">
+            Date
+          </th>
 
-              <tbody>
+          <th className="px-5 py-4 text-center text-sm font-semibold">
+            Actions
+          </th>
 
-                { displayedExpenses.map((expense) => (
+        </tr>
 
-                  <tr
-                    key={expense.id}
+      </thead>
+
+      <tbody>
+
+        {displayedExpenses.map((expense) => (
+
+          <tr
+            key={expense.id}
+            className="
+            border-t
+            border-slate-800
+
+            hover:bg-slate-800/40
+
+            transition-all
+            duration-200
+            "
+          >
+
+            <td className="px-5 py-4 whitespace-nowrap">
+              {expense.title}
+            </td>
+
+            <td className="px-5 py-4 whitespace-nowrap">
+              {expense.category}
+            </td>
+
+            <td className="px-5 py-4 font-semibold text-green-400 whitespace-nowrap">
+              ₹{Number(expense.amount).toLocaleString("en-IN")}
+            </td>
+
+            <td className="px-5 py-4 whitespace-nowrap">
+              {expense.date}
+            </td>
+
+            <td className="px-5 py-4">
+
+              <div className="flex justify-center gap-3">
+
+                <button
+                  onClick={() => openEditModal(expense)}
                   className="
-                    border-t
-                    border-slate-800
+                  w-10
+                  h-10
 
-                    hover:bg-slate-800/40
+                  flex
+                  items-center
+                  justify-center
 
-                    transition-all
-                    duration-200
-                    "
-                  >
+                  rounded-xl
 
-                    <td className="p-4">
-                      {expense.title}
-                    </td>
+                  text-blue-400
 
-                    <td className="p-4">
-                      {expense.category}
-                    </td>
+                  hover:bg-blue-500/20
 
-                    <td className="p-4">
-                      ₹{expense.amount}
-                    </td>
+                  transition-all
+                  "
+                >
+                  <FaEdit />
+                </button>
 
-                    <td className="p-4">
-                      {expense.date}
-                    </td>
+                <button
+                  onClick={() => removeExpense(expense.id)}
+                  className="
+                  w-10
+                  h-10
 
-                    <td className="p-4">
+                  flex
+                  items-center
+                  justify-center
 
-                   <div className="flex justify-center gap-3">
+                  rounded-xl
 
-            <button
-                onClick={() =>
-                openEditModal(expense)
-                }
-                className="
-                p-2
+                  text-red-400
 
-                rounded-lg
+                  hover:bg-red-500/20
 
-                text-blue-400
+                  transition-all
+                  "
+                >
+                  <FaTrash />
+                </button>
 
-                hover:bg-blue-500/20
+              </div>
 
-                transition-all
-                "
-            >
-                <FaEdit />
-            </button>
+            </td>
 
-            <button
-                onClick={() =>
-                removeExpense(expense.id)
-                }
-                className="
-                p-2
+          </tr>
 
-                rounded-lg
+        ))}
 
-                text-red-400
+      </tbody>
 
-                hover:bg-red-500/20
+    </table>
 
-                transition-all
-                "
-            >
-                <FaTrash />
-            </button>
+  </div>
 
-            </div>
-
-                    </td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-           
-
-          </div>
+</div>
 
 {
   showHistory && (

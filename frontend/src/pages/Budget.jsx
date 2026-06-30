@@ -317,14 +317,28 @@ return (
 
       {/* HEADER */}
 
-      <div className="flex justify-between items-center">
+      <div
+  className="
+  flex
+  flex-col
+  sm:flex-row
+
+  items-start
+  sm:items-center
+
+  justify-between
+
+  gap-5
+  mb-8
+  "
+>
 
         <div>
-          <h1 className="text-4xl font-black">
+           <h1 className="text-3xl sm:text-4xl font-bold">
             Budget Management
           </h1>
 
-          <p className="text-slate-400">
+          <p className="text-slate-400 mt-2">
             Track and control your spending
           </p>
         </div>
@@ -355,9 +369,10 @@ return (
      <div
   className="
   grid
-  grid-cols-2
-  xl:grid-cols-4
-  gap-6
+grid-cols-1
+sm:grid-cols-2
+xl:grid-cols-4
+gap-5
   "
 >
             <SummaryCard

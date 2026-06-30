@@ -3,7 +3,7 @@ import {
   Pie,
   Cell,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 
 const COLORS = [
@@ -13,20 +13,11 @@ const COLORS = [
   "#10B981",
   "#F59E0B",
   "#EF4444",
-  "#EC4899"
+  "#EC4899",
 ];
 
-const CustomTooltip = ({
-  active,
-  payload
-}) => {
-
-  if (
-    active &&
-    payload &&
-    payload.length
-  ) {
-
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
     return (
       <div
         className="
@@ -39,27 +30,13 @@ const CustomTooltip = ({
         shadow-2xl
         "
       >
-
-        <p
-          className="
-          text-white
-          font-semibold
-          mb-1
-          "
-        >
+        <p className="text-white font-semibold mb-1">
           {payload[0].name}
         </p>
 
-        <p
-          className="
-          text-cyan-400
-          font-bold
-          "
-        >
-          ₹
-          {payload[0].value.toLocaleString()}
+        <p className="text-cyan-400 font-bold">
+          ₹{payload[0].value.toLocaleString("en-IN")}
         </p>
-
       </div>
     );
   }
@@ -68,61 +45,45 @@ const CustomTooltip = ({
 };
 
 export default function CategoryTrendChart({
-  data = []
+  data = [],
 }) {
+  const mergedData = Object.values(
+    data.reduce((acc, item) => {
+      const category = item.category
+        ?.trim()
+        ?.toLowerCase();
 
-  const mergedData =
-    Object.values(
+      if (!category) return acc;
 
-      data.reduce(
-        (acc, item) => {
+      if (!acc[category]) {
+        acc[category] = {
+          category:
+            category.charAt(0).toUpperCase() +
+            category.slice(1),
+          amount: 0,
+        };
+      }
 
-          const category =
-            item.category
-              ?.trim()
-              ?.toLowerCase();
+      acc[category].amount += Number(
+        item.amount || 0
+      );
 
-          if (!category)
-            return acc;
+      return acc;
+    }, {})
+  );
 
-          if (!acc[category]) {
-
-            acc[category] = {
-
-              category:
-                category
-                  .charAt(0)
-                  .toUpperCase() +
-                category.slice(1),
-
-              amount: 0
-            };
-          }
-
-          acc[category].amount +=
-            Number(item.amount || 0);
-
-          return acc;
-
-        },
-        {}
-      )
-    );
-
-  const total =
-    mergedData.reduce(
-      (sum, item) =>
-        sum + item.amount,
-      0
-    );
+  const total = mergedData.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
 
   return (
-
     <div
       className="
       h-full
+      w-full
 
-      bg-slate-900/60
+      bg-slate-900/70
       backdrop-blur-xl
 
       border
@@ -130,30 +91,34 @@ export default function CategoryTrendChart({
 
       rounded-3xl
 
-      p-6    
-  hover:border-blue-500/60
-      hover:shadow-xl
-      hover:shadow-purple-500/10
+      p-4
+      sm:p-5
+      lg:p-6
+
+      hover:border-blue-500/60
+      hover:shadow-[0_15px_40px_rgba(59,130,246,0.12)]
 
       transition-all
       duration-300
       "
     >
-
-      {/* HEADER */}
+      {/* Header */}
 
       <div
         className="
         flex
-        justify-between
         items-center
+        justify-between
+
         mb-4
+        sm:mb-6
         "
       >
-
         <h2
           className="
-          text-2xl
+          text-xl
+          sm:text-2xl
+
           font-bold
 
           bg-gradient-to-r
@@ -170,12 +135,15 @@ export default function CategoryTrendChart({
 
         <span
           className="
-          px-3
+          text-[10px]
+          sm:text-xs
+
+          px-2
+          sm:px-3
+
           py-1
 
           rounded-full
-
-          text-xs
 
           bg-blue-500/10
           text-blue-400
@@ -183,14 +151,12 @@ export default function CategoryTrendChart({
         >
           Distribution
         </span>
-
       </div>
 
       {mergedData.length === 0 ? (
-
         <div
           className="
-          h-[350px]
+          h-full
 
           flex
           items-center
@@ -201,98 +167,74 @@ export default function CategoryTrendChart({
         >
           No category expenses found
         </div>
-
       ) : (
+        <div className="w-full h-[calc(100%-55px)]">
 
-        <ResponsiveContainer
-          width="100%"
-          height={380}
-        >
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+          >
+            <PieChart>
+              <Pie
+                data={mergedData}
+                dataKey="amount"
+                nameKey="category"
 
-          <PieChart>
+                innerRadius="45%"
+                outerRadius="72%"
 
-            <Pie
-              data={mergedData}
-              dataKey="amount"
-              nameKey="category"
+                paddingAngle={3}
 
-              innerRadius={90}
-              outerRadius={135}
+                label={({ percent }) =>
+                  `${(percent * 100).toFixed(0)}%`
+                }
 
-              paddingAngle={3}
+                labelLine={false}
 
-              label={({
-                percent
-              }) =>
-                `${(
-                  percent * 100
-                ).toFixed(0)}%`
-              }
-
-              labelLine={false}
-
-              animationDuration={
-                1200
-              }
-            >
-
-              {mergedData.map(
-                (
-                  entry,
-                  index
-                ) => (
-
+                animationDuration={1200}
+              >
+                {mergedData.map((entry, index) => (
                   <Cell
                     key={index}
                     fill={
                       COLORS[
                         index %
-                        COLORS.length
+                          COLORS.length
                       ]
                     }
                   />
+                ))}
+              </Pie>
 
-                )
-              )}
+              <Tooltip
+                content={<CustomTooltip />}
+              />
 
-            </Pie>
+              <text
+                x="50%"
+                y="48%"
+                textAnchor="middle"
+                fill="#ffffff"
+                fontSize="18"
+                fontWeight="700"
+              >
+                ₹{total.toLocaleString("en-IN")}
+              </text>
 
-            <Tooltip
-              content={
-                <CustomTooltip />
-              }
-            />
+              <text
+                x="50%"
+                y="56%"
+                textAnchor="middle"
+                fill="#94A3B8"
+                fontSize="11"
+              >
+                Total Spend
+              </text>
+            </PieChart>
+          </ResponsiveContainer>
 
-            {/* CENTER TOTAL */}
-
-            <text
-              x="50%"
-              y="48%"
-              textAnchor="middle"
-              fill="#ffffff"
-              fontSize="26"
-              fontWeight="700"
-            >
-              ₹
-              {total.toLocaleString()}
-            </text>
-
-            <text
-              x="50%"
-              y="56%"
-              textAnchor="middle"
-              fill="#94A3B8"
-              fontSize="12"
-            >
-              Total Spend
-            </text>
-
-          </PieChart>
-
-        </ResponsiveContainer>
-
+        </div>
       )}
-
     </div>
   );
 }

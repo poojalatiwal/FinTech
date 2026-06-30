@@ -66,48 +66,61 @@ export default function ExpenseHistory({
       >
         {/* HEADER */}
 
-        <div
-          className="
-          flex
-          justify-between
-          items-center
-          mb-6
-          "
-        >
-          <div>
-            <h2
-              className="
-              text-3xl
-              font-bold
-              text-white
-              "
-            >
-              Expense History
-            </h2>
+<div
+  className="
+  flex
+  justify-between
+  items-start
 
-            <p className="text-slate-400">
-              Yearly & Monthly Records
-            </p>
-          </div>
+  mb-8
+  "
+>
 
-          <button
-            onClick={onClose}
-            className="
-            px-4
-            py-2
+  <div>
 
-            rounded-xl
+    <h2
+      className="
+      text-3xl
+      sm:text-4xl
+      font-bold
+      text-white
+      "
+    >
+      Expense History
+    </h2>
 
-            bg-slate-800
+    <p className="mt-2 text-slate-400 text-lg">
+      Yearly & Monthly Records
+    </p>
 
-            hover:bg-slate-700
+  </div>
 
-            transition-all
-            "
-          >
-            Close
-          </button>
-        </div>
+  <button
+    onClick={onClose}
+    className="
+    w-11
+    h-11
+
+    flex
+    items-center
+    justify-center
+
+    rounded-xl
+
+    text-white
+    text-2xl
+
+    hover:bg-slate-800
+    hover:text-red-400
+
+    transition-all
+    duration-300
+    "
+  >
+    ✕
+  </button>
+
+</div>
 
         {/* YEARS */}
 
@@ -253,180 +266,229 @@ export default function ExpenseHistory({
                               2;
 
                             return (
-                              <div
-                                key={
-                                  expense.id
-                                }
-                                className="
-                                flex
-                                justify-between
-                                items-center
+                             <div
+  key={expense.id}
+  className="
+  p-4
+  sm:px-5
+  sm:py-4
 
-                                px-5
-                                py-4
+  hover:bg-slate-800/40
 
-                                hover:bg-slate-800/40
+  transition-all
+  duration-300
+  "
+>
 
-                                transition-all
-                                duration-300
-                                "
-                              >
-                                <div>
-                                  <p
-                                    className="
-                                    font-semibold
-                                    text-white
-                                    "
-                                  >
-                                    {
-                                      expense.title
-                                    }
-                                  </p>
+  {/* Desktop */}
 
-                                  <div
-                                    className="
-                                    flex
-                                    items-center
-                                    gap-3
-                                    mt-1
-                                    "
-                                  >
-                                    <span
-                                      className="
-                                      px-2
-                                      py-1
+  <div className="hidden md:flex justify-between items-center">
 
-                                      rounded-full
+    <div>
 
-                                      text-xs
+      <p className="font-semibold text-lg text-white">
+        {expense.title}
+      </p>
 
-                                      bg-blue-500/10
-                                      text-blue-400
-                                      "
-                                    >
-                                      {
-                                        expense.category
-                                      }
-                                    </span>
+      <div className="flex items-center gap-3 mt-2">
 
-                                    <span
-                                      className="
-                                      text-xs
-                                      text-slate-500
-                                      "
-                                    >
-                                      {new Date(
-                                        expense.date
-                                      ).toLocaleDateString(
-                                        "en-IN"
-                                      )}
-                                    </span>
-                                  </div>
-                                </div>
+        <span
+          className="
+          px-2
+          py-1
 
-                                <div
-                                  className="
-                                  flex
-                                  items-center
-                                  gap-5
-                                  "
-                                >
-                                  <p
-                                    className="
-                                    text-red-400
-                                    font-bold
-                                    text-lg
-                                    "
-                                  >
-                                    ₹
-                                    {Number(
-                                      expense.amount
-                                    ).toLocaleString(
-                                      "en-IN"
-                                    )}
-                                  </p>
+          rounded-full
 
-                                  {isLocked ? (
-                                    <div
-                                      className="
-                                      flex
-                                      items-center
-                                      gap-2
+          text-xs
 
-                                      text-xs
-                                      text-yellow-400
-                                      "
-                                    >
-                                      <FaLock />
-                                      Locked
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className="
-                                      flex
-                                      items-center
-                                      gap-2
-                                      "
-                                    >
-                                      <button
-                                        onClick={() =>
-                                          onEdit?.(
-                                            expense
-                                          )
-                                        }
-                                        className="
-                                        w-9
-                                        h-9
+          bg-blue-500/10
+          text-blue-400
+          "
+        >
+          {expense.category}
+        </span>
 
-                                        rounded-xl
+        <span className="text-xs text-slate-500">
+          {new Date(expense.date).toLocaleDateString("en-IN")}
+        </span>
 
-                                        flex
-                                        items-center
-                                        justify-center
+      </div>
 
-                                        bg-blue-500/10
-                                        text-blue-400
+    </div>
 
-                                        hover:bg-blue-500/20
-                                        hover:scale-110
+    <div className="flex items-center gap-5">
 
-                                        transition-all
-                                        "
-                                      >
-                                        <FaEdit />
-                                      </button>
+      <p className="text-xl font-bold text-red-400">
+        ₹{Number(expense.amount).toLocaleString("en-IN")}
+      </p>
 
-                                      <button
-                                        onClick={() =>
-                                          onDelete?.(
-                                            expense.id
-                                          )
-                                        }
-                                        className="
-                                        w-9
-                                        h-9
+      {isLocked ? (
 
-                                        rounded-xl
+        <div className="flex items-center gap-2 text-yellow-400">
 
-                                        flex
-                                        items-center
-                                        justify-center
+          <FaLock />
 
-                                        bg-red-500/10
-                                        text-red-400
+          Locked
 
-                                        hover:bg-red-500/20
-                                        hover:scale-110
+        </div>
 
-                                        transition-all
-                                        "
-                                      >
-                                        <FaTrash />
-                                      </button>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
+      ) : (
+
+        <div className="flex gap-2">
+
+          <button
+            onClick={() => onEdit?.(expense)}
+            className="
+            w-10
+            h-10
+
+            rounded-xl
+
+            flex
+            items-center
+            justify-center
+
+            bg-blue-500/10
+            text-blue-400
+
+            hover:bg-blue-500/20
+            "
+          >
+            <FaEdit />
+          </button>
+
+          <button
+            onClick={() => onDelete?.(expense.id)}
+            className="
+            w-10
+            h-10
+
+            rounded-xl
+
+            flex
+            items-center
+            justify-center
+
+            bg-red-500/10
+            text-red-400
+
+            hover:bg-red-500/20
+            "
+          >
+            <FaTrash />
+          </button>
+
+        </div>
+
+      )}
+
+    </div>
+
+  </div>
+
+  {/* Mobile */}
+
+  <div className="md:hidden space-y-4">
+
+    <div>
+
+      <p className="text-lg font-semibold text-white break-words">
+        {expense.title}
+      </p>
+
+    </div>
+
+    <div className="flex flex-wrap gap-2">
+
+      <span
+        className="
+        px-3
+        py-1
+
+        rounded-full
+
+        text-xs
+
+        bg-blue-500/10
+        text-blue-400
+        "
+      >
+        {expense.category}
+      </span>
+
+      <span className="text-xs text-slate-500 flex items-center">
+        {new Date(expense.date).toLocaleDateString("en-IN")}
+      </span>
+
+    </div>
+
+    <div className="flex justify-between items-center">
+
+      <p className="text-2xl font-bold text-red-400">
+        ₹{Number(expense.amount).toLocaleString("en-IN")}
+      </p>
+
+      {isLocked ? (
+
+        <div className="flex items-center gap-2 text-yellow-400 text-sm">
+
+          <FaLock />
+
+          Locked
+
+        </div>
+
+      ) : (
+
+        <div className="flex gap-3">
+
+          <button
+            onClick={() => onEdit?.(expense)}
+            className="
+            w-11
+            h-11
+
+            rounded-xl
+
+            flex
+            items-center
+            justify-center
+
+            bg-blue-500/10
+            text-blue-400
+            "
+          >
+            <FaEdit />
+          </button>
+
+          <button
+            onClick={() => onDelete?.(expense.id)}
+            className="
+            w-11
+            h-11
+
+            rounded-xl
+
+            flex
+            items-center
+            justify-center
+
+            bg-red-500/10
+            text-red-400
+            "
+          >
+            <FaTrash />
+          </button>
+
+        </div>
+
+      )}
+
+    </div>
+
+  </div>
+
+</div>
                             );
                           })}
                       </div>

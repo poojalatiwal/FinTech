@@ -123,111 +123,151 @@ useEffect(() => {
   return (
     <>
 
-      <nav
-        className="
-        sticky
-        top-0
-        z-40
+    <nav
+  className="
+  sticky
+  top-0
+  z-40
 
-        flex
-        items-center
-        justify-between
+  flex
+  items-center
+  justify-between
 
-        px-4
-        sm:px-6
+  px-3
+  sm:px-6
 
-        py-4
+  py-3
+  sm:py-4
 
-        bg-slate-900/80
-        backdrop-blur-xl
+  bg-slate-900/80
+  backdrop-blur-xl
 
-        border-b
-        border-slate-800
-        "
-      >
-
+  border-b
+  border-slate-800
+  "
+>
         {/* LEFT */}
 
-        <div
-          className="
-          flex
-          items-center
-          gap-4
-          "
-        >
+       <div className="flex items-center gap-2 min-w-0">
 
-          {/* AI CARD */}
 
-          <div
-            onClick={() =>
-              setShowAIChat(
-                true
-              )
-            }
-            className="
-            hidden
-            md:flex
+  {/* Desktop AI Card */}
 
-            cursor-pointer
+  <div
+    onClick={() => setShowAIChat(true)}
+    className="
+    hidden
+    md:flex
 
-            items-center
-            gap-3
+    cursor-pointer
 
-            px-5
-            py-3
+    items-center
+    gap-3
 
-            rounded-2xl
+    px-5
+    py-3
 
-            bg-slate-800/50
+    rounded-2xl
 
-            border
-            border-slate-700
+    bg-slate-800/50
 
-            hover:border-blue-500
-            hover:bg-slate-800
+    border
+    border-slate-700
 
-            transition-all
-            "
-          >
+    hover:border-blue-500
+    hover:bg-slate-800
 
-            <div
-              className="
-              w-3
-              h-3
+    transition-all
+    "
+  >
+    <div
+      className="
+      w-3
+      h-3
 
-              rounded-full
+      rounded-full
 
-              bg-green-500
+      bg-green-500
 
-              animate-pulse
-              "
-            />
+      animate-pulse
+      "
+    />
 
-            <div>
+    <div>
+      <p className="text-sm text-white">
+        AI Assistant Active
+      </p>
 
-              <p
-                className="
-                text-sm
-                text-white
-                "
-              >
-                AI Assistant Active
-              </p>
-
-              <p
-                className="
-                text-xs
-                text-slate-400
-                "
-              >
-                Tap to chat
-              </p>
-
-            </div>
-
-          </div>
+      <p className="text-xs text-slate-400">
+        Tap to chat
+      </p>
+    </div>
 
         </div>
+
+{/* Mobile AI Assistant */}
+
+<div
+  onClick={() => setShowAIChat(true)}
+  className="
+md:hidden
+
+translate-x-12
+
+flex
+items-center
+gap-2
+
+px-3
+py-2
+
+rounded-full
+
+bg-slate-800/80
+backdrop-blur-md
+
+border
+border-slate-700
+
+cursor-pointer
+
+hover:border-blue-500
+hover:bg-slate-800
+
+transition-all
+duration-300
+"
+>
+
+  <span
+    className="
+    w-2
+    h-2
+
+    rounded-full
+
+    bg-green-500
+
+    animate-pulse
+    "
+  />
+
+  <div className="leading-tight">
+
+    <p className="text-[11px] font-semibold text-white">
+      AI Assistant
+    </p>
+
+    <p className="text-[10px] text-slate-400">
+      Tap to chat
+    </p>
+
+  </div>
+
+</div>
+
+</div>
+
 
         {/* RIGHT */}
 
@@ -241,62 +281,69 @@ useEffect(() => {
             "
           >
 
-<div className="relative"
-  ref={notificationRef}  >
+<div className="relative" ref={notificationRef}>
 
-<button
- onClick={(e) => {
-
-  e.stopPropagation();
-
-  setShowNotifications(
-    prev => !prev
-  );
-
-  setUnreadCount(0);
-
-}}
-
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setShowNotifications(prev => !prev);
+      setUnreadCount(0);
+    }}
     className="
-    relative
-    text-xl
-    text-slate-300
-    hover:text-white
-    transition-all
+      relative
+
+      w-11
+      h-11
+
+      flex
+      items-center
+      justify-center
+
+      rounded-full
+
+      bg-slate-800/70
+
+      border
+      border-slate-700
+
+      text-blue-400
+      text-xl
+
+      hover:bg-slate-800
+      hover:border-blue-500
+      hover:text-white
+
+      transition-all
     "
   >
 
-    <FaBell />
+    <FaBell className="text-xl" />
 
-    {unreadCount > 0 &&  (
-
+    {unreadCount > 0 && (
       <span
         className="
-        absolute
-        -top-2
-        -right-2
+          absolute
+          -top-1
+          -right-1
 
-        min-w-[18px]
-        h-[18px]
+          w-5
+          h-5
 
-        px-1
+          flex
+          items-center
+          justify-center
 
-        flex
-        items-center
-        justify-center
+          rounded-full
 
-        text-[10px]
-        font-bold
+          bg-red-500
+          text-white
 
-        rounded-full
-
-        bg-red-500
-        text-white
+          text-[10px]
+          font-bold
         "
       >
         {unreadCount}
       </span>
-
     )}
 
   </button>
