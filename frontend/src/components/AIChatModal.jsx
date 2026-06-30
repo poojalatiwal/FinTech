@@ -66,66 +66,57 @@ export default function AIChatModal({
 
   if (!isOpen) return null;
 
-  const sendMessage =
-    async () => {
+const sendMessage = async () => {
 
-      if (!message.trim())
-        return;
+    if (!message.trim()) return;
 
-      const userMessage = {
-        sender: "user",
-        text: message
-      };
+    const currentMessage = message;
 
-      setMessages(prev => [
+    setMessages(prev => [
         ...prev,
-        userMessage
-      ]);
+        {
+            sender: "user",
+            text: currentMessage
+        }
+    ]);
 
-      const currentMessage =
-        message;
+    setMessage("");
 
-      setMessage("");
-
-      try {
+    try {
 
         setLoading(true);
 
-        const res =
-          await askAI(
-            currentMessage
-          );
+        const response = await askAI(currentMessage);
 
-        const aiMessage = {
-
-          sender: "ai",
-
-          text:
-            res.data.reply ||
-            "No response"
-        };
+        console.log("AI Response:", response);
 
         setMessages(prev => [
-          ...prev,
-          aiMessage
+            ...prev,
+            {
+                sender: "ai",
+                text: response.message || "No response"
+            }
         ]);
 
-      } catch {
+    } catch (err) {
+
+        console.error(err);
 
         setMessages(prev => [
-          ...prev,
-          {
-            sender: "ai",
-            text:
-              "Unable to connect to AI Assistant."
-          }
+            ...prev,
+            {
+                sender: "ai",
+                text: "Unable to connect to AI Assistant."
+            }
         ]);
 
-      } finally {
+    } finally {
 
         setLoading(false);
-      }
-    };
+
+    }
+};
+
 
   const handleKeyDown =
     (e) => {

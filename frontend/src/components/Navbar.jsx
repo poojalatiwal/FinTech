@@ -5,8 +5,14 @@ import {
 } from "react-icons/fa";
 
 import {
-  useState
+  useState,
+  useEffect,
+  useRef
 } from "react";
+
+import {
+  getNotifications
+} from "../api/notificationApi";
 
 import {
   Link,
@@ -27,6 +33,10 @@ export default function Navbar({
     setShowAIChat] =
     useState(false);
 
+const [notifications,setNotifications] = useState([]);
+const [showNotifications,setShowNotifications] = useState(false);
+const [unreadCount, setUnreadCount] = useState(0);
+const notificationRef = useRef(null);
   const token =
     localStorage.getItem(
       "token"
@@ -52,6 +62,64 @@ export default function Navbar({
       navigate("/login");
     };
 
+    useEffect(() => {
+
+  const loadNotifications = async () => {
+
+    try {
+
+      const data =
+        await getNotifications();
+
+      setNotifications(data);
+      setUnreadCount(data.length);
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
+  if (token) {
+
+    loadNotifications();
+
+  }
+
+}, [token]);
+
+useEffect(() => {
+
+  const handleClickOutside = (event) => {
+
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(event.target)
+    ) {
+
+      setShowNotifications(false);
+
+    }
+
+  };
+
+  document.addEventListener(
+    "click",
+    handleClickOutside
+  );
+
+  return () => {
+
+    document.removeEventListener(
+      "click",
+      handleClickOutside
+    );
+
+  };
+
+}, []);
   return (
     <>
 
@@ -87,24 +155,6 @@ export default function Navbar({
           gap-4
           "
         >
-
-          <button
-            onClick={() =>
-              setSidebarOpen?.(
-                true
-              )
-            }
-            className="
-            lg:hidden
-
-            text-xl
-            text-slate-300
-
-            hover:text-blue-400
-            "
-          >
-            <FaBars />
-          </button>
 
           {/* AI CARD */}
 
@@ -191,34 +241,248 @@ export default function Navbar({
             "
           >
 
-            <button
+<div className="relative"
+  ref={notificationRef}  >
+
+<button
+ onClick={(e) => {
+
+  e.stopPropagation();
+
+  setShowNotifications(
+    prev => !prev
+  );
+
+  setUnreadCount(0);
+
+}}
+
+    className="
+    relative
+    text-xl
+    text-slate-300
+    hover:text-white
+    transition-all
+    "
+  >
+
+    <FaBell />
+
+    {unreadCount > 0 &&  (
+
+      <span
+        className="
+        absolute
+        -top-2
+        -right-2
+
+        min-w-[18px]
+        h-[18px]
+
+        px-1
+
+        flex
+        items-center
+        justify-center
+
+        text-[10px]
+        font-bold
+
+        rounded-full
+
+        bg-red-500
+        text-white
+        "
+      >
+        {unreadCount}
+      </span>
+
+    )}
+
+  </button>
+
+  {showNotifications && (
+
+  <div
+    className="
+    absolute
+    right-0
+    top-12
+
+    w-[380px]
+
+    bg-slate-900/95
+    backdrop-blur-xl
+
+    border
+    border-slate-700
+
+    rounded-3xl
+
+    shadow-[0_20px_50px_rgba(0,0,0,0.5)]
+
+    overflow-hidden
+
+    animate-in
+    fade-in
+    zoom-in-95
+
+    z-50
+    "
+  >
+
+    {/* Header */}
+
+    <div
+      className="
+      px-6
+      py-5
+
+      border-b
+      border-slate-800
+
+      flex
+      items-center
+      justify-between
+      "
+    >
+
+      <h3
+        className="
+        text-lg
+        font-bold
+        text-white
+        "
+      >
+        Notifications
+      </h3>
+
+      <span
+        className="
+        text-xs
+        px-2
+        py-1
+
+        rounded-full
+
+        bg-blue-500/20
+        text-blue-400
+        "
+      >
+        {notifications.length}
+      </span>
+
+    </div>
+
+    {/* Body */}
+
+    <div
+      className="
+      max-h-[420px]
+      overflow-y-auto
+      "
+    >
+
+      {notifications.length === 0 ? (
+
+        <div
+          className="
+          p-10
+          text-center
+          text-slate-500
+          "
+        >
+          No notifications
+        </div>
+
+      ) : (
+
+        notifications.map((notification) => (
+
+          <div
+            key={notification.id}
+            className="
+            px-6
+            py-4
+
+            border-b
+            border-slate-800
+
+            hover:bg-slate-800/70
+
+            transition-all
+
+            cursor-pointer
+            "
+          >
+
+            <div
               className="
-              relative
-
-              text-xl
-
-              text-slate-300
+              flex
+              items-start
+              gap-3
               "
             >
 
-              <FaBell />
-
-              <span
+              <div
                 className="
-                absolute
-                -top-1
-                -right-1
-
-                w-3
-                h-3
+                w-10
+                h-10
 
                 rounded-full
 
-                bg-red-500
-                "
-              />
+                bg-gradient-to-r
+                from-cyan-500
+                to-purple-500
 
-            </button>
+                flex
+                items-center
+                justify-center
+
+                text-white
+                "
+              >
+                <FaBell />
+              </div>
+
+              <div className="flex-1">
+
+                <p
+                  className="
+                  text-white
+                  text-sm
+                  leading-6
+                  "
+                >
+                  {notification.message}
+                </p>
+
+                <p
+                  className="
+                  text-xs
+                  text-slate-500
+                  mt-1
+                  "
+                >
+                  Just now
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        ))
+
+      )}
+
+    </div>
+
+  </div>
+
+)}
+</div>
 
             <div
               className="

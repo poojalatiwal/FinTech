@@ -2,6 +2,7 @@ package backend.FinSight.controller;
 
 import backend.FinSight.dto.BudgetRequest;
 import backend.FinSight.dto.BudgetStatusResponse;
+import backend.FinSight.dto.BudgetSummaryResponse;
 import backend.FinSight.model.Budget;
 import backend.FinSight.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,5 +80,19 @@ public class BudgetController {
                 category,
                 month
         );
+    }
+
+    @GetMapping("/summary")
+    public BudgetSummaryResponse getBudgetSummary(
+            Authentication authentication
+    ) {
+
+        String username =
+                authentication.getName();
+
+        return budgetService
+                .getBudgetSummary(
+                        username
+                );
     }
 }

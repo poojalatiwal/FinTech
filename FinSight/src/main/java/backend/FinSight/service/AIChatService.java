@@ -1,49 +1,70 @@
 package backend.FinSight.service;
 
+import backend.FinSight.dto.AIChatRequest;
 import backend.FinSight.dto.ChatResponse;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class AIChatService {
 
-    private final RestTemplate
-            restTemplate =
+    private final RestTemplate restTemplate =
             new RestTemplate();
 
+    // =====================================
+    // Used by ForecastService
+    // =====================================
+    public ChatResponse getReply(String message) {
+
+        AIChatRequest request = new AIChatRequest();
+
+        request.setUserId("");
+
+        request.setMessage(message);
+
+        ChatResponse response =
+                restTemplate.postForObject(
+                        "http://localhost:8000/chat",
+                        request,
+                        ChatResponse.class
+                );
+
+        if (response == null) {
+            throw new RuntimeException(
+                    "No response received from AI service."
+            );
+        }
+
+        return response;
+    }
+
+    // =====================================
+    // Used by AI Chat (RAG)
+    // =====================================
     public ChatResponse getReply(
+            String userId,
             String message
     ) {
 
-        Map<String,String> request =
-                new HashMap<>();
+        AIChatRequest request = new AIChatRequest();
 
-        request.put(
-                "question",
-                message
-        );
+        request.setUserId(userId);
 
-        Map response =
+        request.setMessage(message);
+
+        ChatResponse response =
                 restTemplate.postForObject(
-
                         "http://localhost:8000/chat",
-
                         request,
-
-                        Map.class
+                        ChatResponse.class
                 );
 
-        String answer =
-                response.get(
-                        "answer"
-                ).toString();
+        if (response == null) {
+            throw new RuntimeException(
+                    "No response received from AI service."
+            );
+        }
 
-        return new ChatResponse(
-                answer
-        );
+        return response;
     }
 }

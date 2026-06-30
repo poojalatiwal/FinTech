@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/auth/register",
                                 "/auth/manual-login",
                                 "/oauth2/**",
-                                "/login/**"
+                                "/login/**",
+                                "/ai/**"
                         ).permitAll()
 
                         // ADMIN ROUTES

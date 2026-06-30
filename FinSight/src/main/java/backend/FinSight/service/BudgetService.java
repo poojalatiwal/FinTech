@@ -2,6 +2,7 @@ package backend.FinSight.service;
 
 import backend.FinSight.dto.BudgetRequest;
 import backend.FinSight.dto.BudgetStatusResponse;
+import backend.FinSight.dto.BudgetSummaryResponse;
 import backend.FinSight.model.Budget;
 import backend.FinSight.model.Expense;
 import backend.FinSight.model.User;
@@ -163,6 +164,56 @@ public class BudgetService {
                 spent,
                 remaining,
                 status
+        );
+    }
+
+    public BudgetSummaryResponse getBudgetSummary(
+            String username
+    ) {
+
+        User user =
+                getUserByUsername(username);
+
+        List<Budget> budgets =
+                budgetRepository.findByUserId(
+                        user.getId()
+                );
+
+        List<Expense> expenses =
+                expenseRepository.findByUserId(
+                        user.getId()
+                );
+
+        double totalBudget = budgets.stream()
+                .mapToDouble(
+                        Budget::getLimitAmount
+                )
+                .sum();
+
+        double totalSpent = expenses.stream()
+                .mapToDouble(
+                        Expense::getAmount
+                )
+                .sum();
+
+        double remaining =
+                totalBudget - totalSpent;
+
+        double utilization = 0;
+
+        if (totalBudget > 0) {
+
+            utilization =
+                    (totalSpent / totalBudget)
+                            * 100;
+        }
+
+        return new BudgetSummaryResponse(
+                totalBudget,
+                totalSpent,
+                remaining,
+                budgets.size(),
+                Math.round(utilization)
         );
     }
 }

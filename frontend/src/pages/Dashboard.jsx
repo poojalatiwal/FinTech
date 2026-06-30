@@ -75,9 +75,6 @@ async () => {
 
     incomeType:
       Number(profileForm.incomeType),
-
-    budgetGoal:
-      Number(profileForm.budgetGoal)
   }
 );
     toast.success(
@@ -119,9 +116,7 @@ const [profileForm,
 
     subscriptionServices: 0,
 
-    incomeType: 0,
-
-    budgetGoal: 0
+    incomeType: 0
 
   });
 
@@ -171,8 +166,6 @@ const calculateProfileCompletion =
 
     Number(userProfile.subscriptionServices) > 0,
 
-    Number(userProfile.budgetGoal) > 0,
-
     userProfile.incomeType !== null &&
     userProfile.incomeType !== undefined
 
@@ -213,9 +206,7 @@ const [
   insightRes,
   profileRes,
   expenseRes,
-  healthRes,
-  forecastRes,
-  stabilityRes
+  healthRes
 ] = await Promise.all([
   getExpenseSummary(),
   getRecentExpenses(),
@@ -223,21 +214,32 @@ const [
   getInsight(),
   getFinancialProfile(),
   getExpenses(),
-  getFinancialHealth(),
-  getForecast(),
-  getFinancialStability()
+  getFinancialHealth()
 ]);
+
+// show dashboard immediately
+setLoading(false);
+
+// AI calls separately
+getForecast()
+    .then((res) => {
+        setForecast(res);
+        console.log("Forecast:", res);
+    })
+    .catch(console.error);
+    
+getFinancialStability()
+    .then(res => setStability(res.data))
+    .catch(console.error);
 
     console.log("Summary:", summaryRes.data);
     console.log("Recent:", recentRes.data);
     console.log("Budget:", budgetRes.data);
     console.log("Insight:", insightRes.data);
     console.log("Profile:", profileRes.data);
-    console.log( "Financial Stability:",stabilityRes.data);
 
     setUserProfile(profileRes.data);
-    setForecast(forecastRes.data);
-    setStability(stabilityRes.data);
+
 
     setProfileForm({
       monthlyIncome:
@@ -261,8 +263,6 @@ const [
       incomeType:
         profileRes.data.incomeType || 0,
 
-      budgetGoal:
-        profileRes.data.budgetGoal || 0
     });
 
    const totalExpenses =
@@ -295,12 +295,31 @@ const [
 const monthlyIncome =
   profileRes.data?.monthlyIncome ?? 0;
 
-const budgetGoal =
-  profileRes.data?.budgetGoal ?? 0;
+const currentMonth = new Date()
+  .toLocaleString("default", {
+    month: "long",
+  })
+  .toLowerCase();
+
+const monthlyBudgetGoal =
+  budgetRes.data
+    .filter(
+      (b) =>
+        b.month?.toLowerCase() ===
+        currentMonth
+    )
+    .reduce(
+      (sum, b) =>
+        sum + Number(b.limitAmount),
+      0
+    );
 
 const budgetUsage =
-  budgetGoal > 0
-    ? (currentMonthExpense / budgetGoal) * 100
+  monthlyBudgetGoal > 0
+    ? (
+        currentMonthExpense /
+        monthlyBudgetGoal
+      ) * 100
     : 0;
 
 let budgetStatus = "Safe";
@@ -328,8 +347,7 @@ setDashboard({
       0
     ),
 
-  budgetGoal:
-    profileRes.data?.budgetGoal ?? 0,
+budgetGoal: monthlyBudgetGoal,
 
   recentExpenses:
     recentRes.data ?? [],
@@ -521,7 +539,7 @@ const stats = [
     <div>
 
       <p className="text-xs text-slate-400">
-        AI Analysis Readiness
+     AI Prediction Readiness
       </p>
 
       <h3 className="text-xl font-bold text-blue-400">
@@ -545,7 +563,7 @@ const stats = [
       to-purple-600
       "
     >
-      Complete
+ Add Details
     </button>
 
   </div>
@@ -689,7 +707,10 @@ const stats = [
   p-4
   min-h-[220px]
 
-  hover:border-blue-500/50
+    hover:border-blue-500
+    hover:scale-[1.02]
+    hover:-translate-y-1
+    hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
   transition-all
   "
 >
@@ -981,7 +1002,13 @@ const stats = [
   rounded-3xl
   p-5
 
-  hover:border-blue-500/40
+    hover:border-blue-500
+
+              hover:scale-[1.02]
+
+              hover:-translate-y-1
+
+              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
   transition-all
   "
 >
@@ -1650,27 +1677,6 @@ alert.level === "HIGH"
                 type="number"
                 name="subscriptionServices"
                 value={profileForm.subscriptionServices}
-                onChange={handleProfileChange}
-                className="
-                w-full
-                bg-slate-800
-                border border-slate-700
-                p-3
-                rounded-xl
-                text-white
-                "
-            />
-            </div>
-
-            <div className="space-y-2">
-            <label className="text-sm text-slate-400">
-                Budget Goal
-            </label>
-
-            <input
-                type="number"
-                name="budgetGoal"
-                value={profileForm.budgetGoal}
                 onChange={handleProfileChange}
                 className="
                 w-full

@@ -74,40 +74,41 @@ const [
 
   }, []);
 
-  const loadData = async () => {
+const loadData = async () => {
 
-    try {
-const [
-  expenseRes,
-  summaryRes,
-  forecastRes,
-  categoryTrendRes,
-  trendRes
-] = await Promise.all([
-  getExpenses(),
-  getExpenseSummary(),
-  getForecast(),
-  getCategoryTrends(),
-  getMonthlyTrend()
-]);
+  try {
 
-setTrendData(trendRes.data);
+    const [
+      expenseRes,
+      summaryRes,
+      categoryTrendRes,
+      trendRes
+    ] = await Promise.all([
+      getExpenses(),
+      getExpenseSummary(),
+      getCategoryTrends(),
+      getMonthlyTrend()
+    ]);
+
     setExpenses(expenseRes.data);
-
     setSummary(summaryRes.data);
+    setCategoryTrends(categoryTrendRes.data);
+    setTrendData(trendRes.data);
 
-    setForecast(forecastRes.data);
-
-    setCategoryTrends(
-    categoryTrendRes.data
-    );
-    } catch (err) {
-
-      console.error(err);
-
+    // Load AI forecast separately
+    try {
+      const forecastData = await getForecast();
+      console.log(forecastData);
+      setForecast(forecastData);
+    } catch (e) {
+      console.error("Forecast Error", e);
     }
 
-  };
+  } catch (err) {
+    console.error(err);
+  }
+
+};
 
   const handleChange = (e) => {
 
@@ -373,8 +374,10 @@ duration-300
     rounded-3xl
     p-6
 
-    hover:border-blue-500
-    hover:shadow-[0_0_30px_rgba(239,68,68,0.25)]
+      hover:border-blue-500
+              hover:scale-[1.02]
+              hover:-translate-y-1
+              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
 
     transition-all
     duration-300
@@ -411,8 +414,13 @@ duration-300
     rounded-3xl
     p-6
 
-    hover:border-blue-500
-    hover:shadow-[0_0_30px_rgba(59,130,246,0.25)]
+      hover:border-blue-500
+
+              hover:scale-[1.02]
+
+              hover:-translate-y-1
+
+              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
 
     transition-all
     duration-300
@@ -450,8 +458,13 @@ duration-300
     rounded-3xl
     p-6
 
-    hover:border-blue-500
-    hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]
+      hover:border-blue-500
+
+              hover:scale-[1.02]
+
+              hover:-translate-y-1
+
+              hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)]
 
     transition-all
     duration-300

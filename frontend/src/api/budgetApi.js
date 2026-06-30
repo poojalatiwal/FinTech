@@ -22,3 +22,7 @@ export const deleteBudget = (
   id
 ) =>
   API.delete(`/budget/${id}`);
+
+  // budget summary
+  export const getBudgetSummary = () =>
+  API.get("/budget/summary");

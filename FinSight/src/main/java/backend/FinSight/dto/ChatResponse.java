@@ -8,5 +8,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class ChatResponse {
 
-    private String reply;
+    private String message;
+
+    private String forecastExplanation;
+
+    private String trendReason;
+
+    private String trendExplanation;
 }

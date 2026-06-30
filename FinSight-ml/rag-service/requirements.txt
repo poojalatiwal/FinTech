@@ -8,3 +8,6 @@ numpy
 pydantic
 torch
 transformers
+groq
+pymongo
+python-dotenv

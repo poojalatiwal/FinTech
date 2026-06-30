@@ -1,0 +1,12 @@
+Feature,Importance
+transaction_count,0.6216304
+savings_rate,0.19204997
+monthly_income,0.11210151
+rent_or_mortgage,0.028592769
+loan_payment,0.015300719
+investment_amount,0.015093403
+income_type,0.005187371
+subscription_services,0.0051669255
+emergency_fund,0.004877033
+debt_to_income_ratio,0.0
+cash_flow_status,0.0

@@ -29,6 +29,16 @@ credit_model = joblib.load(
 savings_model = joblib.load(
     "savings_model.pkl"
 )
+expense_metrics = joblib.load(
+    "expense_metrics.pkl"
+)
+expense_model = joblib.load(
+    "expense_forecast_model.pkl"
+)
+
+expense_encoders = joblib.load(
+    "expense_forecast_encoders.pkl"
+)
 
 forecast_model = joblib.load(
     "expense_forecast_model.pkl"
@@ -248,7 +258,6 @@ def predict_savings():
     "/predict/expense",
     methods=["GET", "POST"]
 )
-
 def predict_expense():
 
     if request.method == "GET":
@@ -257,75 +266,115 @@ def predict_expense():
 
             "success": True,
 
-            "message":
-            "Expense Forecast API Working"
+            "message": "Expense Forecast API Working"
+
         })
 
     try:
 
         data = request.get_json(force=True)
 
-        print("Expense Input:", data)
+        print("Expense Input :", data)
 
         feature_order = [
 
             "monthly_income",
 
-            "monthly_expense_total",
-
-            "savings_rate",
-
-            "debt_to_income_ratio",
-
             "loan_payment",
 
             "investment_amount",
 
-            "subscription_services",
-
             "emergency_fund",
-
-            "transaction_count",
-
-            "discretionary_spending",
-
-            "essential_spending",
-
-            "income_type",
 
             "rent_or_mortgage",
 
-            "financial_advice_score"
+            "subscription_services",
+
+            "transaction_count",
+
+            "debt_to_income_ratio",
+
+            "savings_rate",
+
+            "income_type",
+
+            "cash_flow_status"
+
         ]
 
         df = pd.DataFrame([data])
 
-        # IMPORTANT
+        # ======================================
+        # Encode income_type
+        # ======================================
+
+        encoder = expense_encoders["income_type"]
+
+        value = str(df.loc[0, "income_type"])
+
+        if value not in encoder.classes_:
+
+            value = "Unknown" if "Unknown" in encoder.classes_ else encoder.classes_[0]
+
+        df["income_type"] = encoder.transform([value])
+
+        # ======================================
+        # Encode cash_flow_status
+        # ======================================
+
+        encoder = expense_encoders["cash_flow_status"]
+
+        value = str(df.loc[0, "cash_flow_status"])
+
+        if value not in encoder.classes_:
+
+            value = "Unknown" if "Unknown" in encoder.classes_ else encoder.classes_[0]
+
+        df["cash_flow_status"] = encoder.transform([value])
+
+        # ======================================
+        # Reorder Features
+        # ======================================
+
         df = df[feature_order]
+
+        # ======================================
+        # Prediction
+        # ======================================
 
         prediction = forecast_model.predict(df)
 
-        result = float(prediction[0])
+        predicted_expense = round(
+            float(prediction[0]),
+            2
+        )
+
+        confidence = round(
+            float(expense_metrics["accuracy"]),
+            2
+        )
 
         return jsonify({
 
             "success": True,
 
-            "forecast_amount": result
+            "forecast_amount": predicted_expense,
+
+            "confidence": confidence
+
         })
 
     except Exception as e:
 
-        print("EXPENSE ERROR:", str(e))
+        print("EXPENSE ERROR :", str(e))
 
         return jsonify({
 
             "success": False,
 
             "error": str(e)
+
         }), 500
-
-
 # ==========================================
 # RUN APPLICATION
 # ==========================================

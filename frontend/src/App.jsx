@@ -11,7 +11,9 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Expenses from "./pages/Expenses";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-
+import Budget from "./pages/Budget";
+import Forecast from "./pages/Forecast";
+import Reports from "./pages/Report";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
@@ -70,6 +72,34 @@ export default function App() {
           }
         />
 
+        <Route
+  path="/budget"
+  element={
+    <ProtectedRoute>
+      <Budget />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/forecast"
+  element={
+    <ProtectedRoute>
+      <Forecast />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/reports"
+  element={
+    <ProtectedRoute>
+      <Reports/>
+    </ProtectedRoute>
+  }
+/>
         {/* INVALID ROUTE */}
 
         <Route

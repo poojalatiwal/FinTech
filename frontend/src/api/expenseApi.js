@@ -47,9 +47,10 @@ export const getMonthlyTrend = () =>
 
 
 // expense forecast
-export const getForecast = () =>
-  API.get("/forecast");
-
+export const getForecast = async () => {
+  const response = await API.get("/forecast");
+  return response.data;
+};
 // financial stability
 export const getFinancialStability =
   () => API.get("/financial-health");

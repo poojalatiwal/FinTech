@@ -10,7 +10,8 @@ import {
   FaSignOutAlt,
   FaCoins,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaFilePdf
 } from "react-icons/fa";
 
 import { NavLink, useNavigate } from "react-router-dom";
@@ -81,11 +82,10 @@ export default function Sidebar() {
       path: "/fraud",
       icon: <FaShieldAlt />
     },
-
     {
-      name: "Notifications",
-      path: "/notifications",
-      icon: <FaBell />
+      name: "Reports",
+      path: "/reports",
+      icon: <FaFilePdf />
     },
 
     {

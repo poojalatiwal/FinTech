@@ -1,5 +1,6 @@
 package backend.FinSight.service;
 
+import backend.FinSight.dto.ChatResponse;
 import backend.FinSight.dto.ForecastResponse;
 import backend.FinSight.model.Expense;
 import backend.FinSight.model.User;
@@ -24,6 +25,9 @@ public class ForecastService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AIChatService aiChatService;
 
     @Autowired
     private FinancialHealthService financialHealthService;
@@ -86,7 +90,12 @@ public class ForecastService {
 
                 return new ForecastResponse(
                         0,
-                        "No expense data available."
+                        0,
+                        0,
+                        "No expense data available.",
+                        "Add a few expenses to generate an AI forecast.",
+                        "No spending trend available.",
+                        "More expense history is required before a trend can be calculated."
                 );
             }
 
@@ -289,39 +298,105 @@ public class ForecastService {
                             ).toString()
                     );
 
-            // =====================================
-            // AI MESSAGE
-            // =====================================
+// SPENDING TREND
 
-            String message;
+            double spendingTrend = 0;
 
-            if (predictedExpense > 50000) {
+            if (totalExpense > 0) {
 
-                message =
-                        "High expense forecast for next month. Try reducing discretionary spending.";
-
+                spendingTrend =
+                        ((predictedExpense - totalExpense)
+                                / totalExpense) * 100;
             }
 
-            else if (predictedExpense > 25000) {
+// FORECAST ACCURACY
 
-                message =
-                        "Moderate expense forecast. Maintain balanced spending.";
+            double forecastAccuracy = 0;
 
+            if (response.get("confidence") != null) {
+
+                forecastAccuracy =
+                        Double.parseDouble(
+                                response.get("confidence")
+                                        .toString()
+                        );
             }
 
-            else {
+            String prompt = String.format("""
+You are a professional financial advisor.
 
-                message =
-                        "Your financial forecast looks stable.";
-            }
+A user's financial information is:
 
-            // =====================================
+Monthly Income: ₹%.2f
+Current Month Expense: ₹%.2f
+Predicted Expense Next Month: ₹%.2f
+Savings Rate: %.2f%%
+Debt To Income Ratio: %.2f%%
+Transaction Count: %d
+Cash Flow Status: %s
+Forecast Accuracy: %.2f%%
+Spending Trend: %.2f%%
+
+Return ONLY valid JSON.
+
+{
+  "message":"",
+  "forecastExplanation":"",
+  "trendReason":"",
+  "trendExplanation":""
+}
+
+Rules:
+
+message:
+Maximum 10 words.
+
+forecastExplanation:
+Explain why the predicted expense is reasonable.
+
+trendReason:
+Explain whether spending is increasing or decreasing.
+
+trendExplanation:
+Explain what this means for the user's financial health and give practical advice.
+
+Do not use markdown.
+Return only JSON.
+""",
+                    user.getMonthlyIncome(),
+                    totalExpense,
+                    predictedExpense,
+                    savingsRate,
+                    debtRatio,
+                    transactionCount,
+                    cashFlowStatus,
+                    forecastAccuracy,
+                    spendingTrend);
+
+            ChatResponse aiResponse =
+                    aiChatService.getReply(prompt);
+
+            String message = aiResponse.getMessage();
+
+            String forecastExplanation =
+                    aiResponse.getForecastExplanation();
+
+            String trendReason =
+                    aiResponse.getTrendReason();
+
+            String trendExplanation =
+                    aiResponse.getTrendExplanation();
+
             // RETURN RESPONSE
-            // =====================================
 
             return new ForecastResponse(
                     predictedExpense,
-                    message
+                    Math.round(spendingTrend * 10.0) / 10.0,
+                    forecastAccuracy,
+                    message,
+                    forecastExplanation,
+                    trendReason,
+                    trendExplanation
             );
 
         }
@@ -330,8 +405,12 @@ public class ForecastService {
 
             return new ForecastResponse(
                     0,
-                    "Forecast failed: "
-                            + e.getMessage()
+                    0,
+                    0,
+                    "Forecast unavailable.",
+                    "Unable to generate forecast analysis.",
+                    "Unable to calculate spending trend.",
+                    "Please add more expense data and try again."
             );
         }
     }

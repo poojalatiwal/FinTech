@@ -1,5 +1,7 @@
 package backend.FinSight.controller;
 
+import backend.FinSight.model.User;
+import backend.FinSight.repository.UserRepository;
 import backend.FinSight.service.PdfReportService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +25,27 @@ public class PdfReportController {
     @Autowired
     private PdfReportService pdfReportService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> downloadPdf(
             Authentication authentication
     ) throws Exception {
 
-        String userId =
+        String username =
                 authentication.getName();
 
+        User user =
+                userRepository
+                        .findByUsername(username)
+                        .orElseThrow();
+
         byte[] pdf =
-                pdfReportService
-                        .generateReport(userId);
+                pdfReportService.generateReport(
+                        user.getId(),
+                        user.getUsername()
+                );
 
         HttpHeaders headers =
                 new HttpHeaders();
@@ -47,6 +59,55 @@ public class PdfReportController {
                         .attachment()
                         .filename(
                                 "financial-report.pdf"
+                        )
+                        .build()
+        );
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdf);
+    }
+
+    @GetMapping("/pdf/monthly")
+    public ResponseEntity<byte[]> downloadMonthlyPdf(
+            Authentication authentication,
+            @RequestParam int month,
+            @RequestParam int year
+    ) throws Exception {
+
+        String username =
+                authentication.getName();
+
+        User user =
+                userRepository
+                        .findByUsername(username)
+                        .orElseThrow();
+
+        byte[] pdf =
+                pdfReportService
+                        .generateMonthlyReport(
+                                user.getId(),
+                                user.getUsername(),
+                                year,
+                                month
+                        );
+
+        HttpHeaders headers =
+                new HttpHeaders();
+
+        headers.setContentType(
+                MediaType.APPLICATION_PDF
+        );
+
+        headers.setContentDisposition(
+                ContentDisposition
+                        .attachment()
+                        .filename(
+                                "monthly-report-" +
+                                        month +
+                                        "-" +
+                                        year +
+                                        ".pdf"
                         )
                         .build()
         );
